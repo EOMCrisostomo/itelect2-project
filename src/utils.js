@@ -11,6 +11,6 @@ export const createTask = (taskData) => {
     if (!validateTask(taskData)) {
         throw new TaskValidationError("Invalid task data");
     } else{
-    return {id: Date.now(), Completed:  false, ...taskData };
+    return {id: Date.now(), completed:  false, ...taskData };
     }
 }
