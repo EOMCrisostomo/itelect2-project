@@ -24,6 +24,7 @@ try {
 } catch (error) {
     console.error(error.message);
 }
+
 try {
     const invalidTask = createTask({ title: "", dueDate: ""});
 } catch (error) {
