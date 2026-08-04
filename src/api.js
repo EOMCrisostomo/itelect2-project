@@ -9,13 +9,14 @@
         }));
         console.log ("-----Fetching sample users using async/await approach-----");
         console.log(data);
+        return data;
     } catch (error) {
         console.error('Error fetching users:', error);
     } finally {
         console.log('==---Fetch operation completed.---==');
     }
     }
-    async function fetchSampleUsersPromise() {
+    export async function fetchSampleUsersPromise() {
         fetch('https://jsonplaceholder.typicode.com/users')
         .then(response => response.json())
         .then((users) => {
@@ -26,6 +27,7 @@
             }));
             console.log ("-----Fetching sample users using Promise-based approach-----");
             console.log(data);
+            return data;
         })
         .catch(error => {
             console.error('Error fetching users:', error);
