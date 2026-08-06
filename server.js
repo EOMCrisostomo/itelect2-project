@@ -1,4 +1,8 @@
-process.loadEnvFile();
+try{
+    process.loadEnvFile();
+} catch (error) {
+    console.error("Error loading environment variables:", error);
+}
 
 import express from "express";
 import router from "./routes/index.js";
