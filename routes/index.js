@@ -1,62 +1,78 @@
 import express from "express";
-import { fetchSampleUsers } from "../src/api.js";
-import { taskData, validateTask, mergeTaskUpdate } from "../src/utils.js";
+import db from "../models/index.cjs";
+const { User, Task } = db;
 const router = express.Router();
 
-router.get("/tasks", (req, res) => {
-    res.json(taskData);
-});
-let usersCache = [];
-    (async () => {
-        usersCache = await fetchSampleUsers();
-    })();
 
-router.get ("/tasks/:id", (req, res) => {
-    const taskId = Number(req.params.id);
-    const task = taskData.find(task => task.id === taskId);
-    if (!task) {
-        return res.status(404).json({ error: `Task ID: ${taskId} not found` });
+router.get("/tasks", async (req, res) => {
+    try {
+        const tasks = await Task.findAll({ include: User });
+        res.json(tasks);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
-    res.json(task);
 });
 
-
-router.get("/users", (req, res) => {
-    res.json(usersCache);
-});
-let newTaskId = 0;
-router.post("/tasks", (req, res) => {
-    newTaskId = taskData.length > 0 ? Math.max(...taskData.map(task => task.id)) + 1 : 1;
-    const newTask = { id: newTaskId++, completed: false, ...req.body };
-    if (!validateTask(newTask)) {
-        return res.status(400).json({ error: "Invalid task data" });
+router.get ("/tasks/:id", async (req, res) => {
+    try {
+        const taskId = Number(req.params.id);
+        const task = await Task.findByPk(taskId, {include: User});
+        if (!task) {
+            return res.status(404).json({ error: `Task ID: ${taskId} not found` });
+        }
+        res.json(task);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
-    taskData.push(newTask);
-    res.status(201).json(newTask);
 });
 
-router.put("/tasks/:id", (req, res) => {
-    const taskId = Number(req.params.id);
-    const taskIndex = taskData.findIndex(task => task.id === taskId);
-    if (taskIndex === -1) {
-        return res.status(404).json({ error: `Task ID: ${taskId} not found` });
+router.get("/users", async (req, res) => {
+    try {
+        await User.findAll({ include: Task }).then(users => {
+            res.json(users);
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
-    const updatedTask = mergeTaskUpdate(taskData[taskIndex], req.body);
-    if (!validateTask(updatedTask)) {
-        return res.status(400).json({ error: "Invalid task data" });
-    }
-    taskData[taskIndex] = updatedTask;
-    res.json(updatedTask);
 });
 
-router.delete("/tasks/:id", (req, res) => {
-    const taskId = Number(req.params.id);
-    const taskIndex = taskData.findIndex(task => task.id === taskId);
-    if (taskIndex === -1) {
-        return res.status(404).json({ error: `Task ID: ${taskId} not found` });
+router.post("/tasks", async (req, res) => {
+    try {
+        let newTaskId = await Task.max('id');
+        if (!newTaskId) {
+            newTaskId = 0;
+        }
+        const newTask = await Task.create({ ...req.body, id: newTaskId + 1 });
+        res.status(201).json(newTask);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
     }
-    taskData.splice(taskIndex, 1);
-    res.status(200).send();
+});
+
+router.put("/tasks/:id", async (req, res) => {
+    try {
+        const task = await Task.findByPk(req.params.id);
+        if (!task) {
+            return res.status(404).json({ error: `Task ID: ${req.params.id} not found` });
+        }
+        await task.update(req.body);
+        res.json(task);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+});
+
+router.delete("/tasks/:id", async (req, res) => {
+    try {
+        const task = await Task.findByPk(req.params.id);
+        if (!task) {
+            return res.status(404).json({ error: `Task ID: ${req.params.id} not found` });
+        }
+        await task.destroy();
+        res.status(200).send();
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
 });
 
 export default router;
