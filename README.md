@@ -1,12 +1,12 @@
 # itelect2-project
 My IT Elective 2 backend web development project.
 
-# API Testing Results
+# **API Testing Results**
 
 This area contains the results of API Testing. 
 
 ---
-### OLD API TESTING RESULTS
+## **OLD API TESTING RESULTS (GT 6)**
 ## GET Request
 
 ### Retrieve All Records
@@ -78,9 +78,8 @@ The API correctly returns an error response when attempting to delete a record t
 
 ---
 
-
-
-### NEW API TESTING RESULTS
+### **NEW API TESTING RESULTS (GT 8)**
+---
 ## GET Request
 
 ### Retrieve All Records
