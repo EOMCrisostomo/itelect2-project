@@ -1,5 +1,7 @@
 import express from "express";
 import db from "../models/index.cjs";
+import verifyToken from "../middleware/verifyToken.js";
+import requireRole from "../middleware/requireRole.js";
 const { User, Task } = db;
 const router = express.Router();
 
@@ -36,7 +38,7 @@ router.get("/users", async (req, res) => {
     }
 });
 
-router.post("/tasks", async (req, res) => {
+router.post("/tasks", verifyToken, async (req, res) => {
     try {
         let newTaskId = await Task.max('id');
         if (!newTaskId) {
@@ -49,7 +51,7 @@ router.post("/tasks", async (req, res) => {
     }
 });
 
-router.put("/tasks/:id", async (req, res) => {
+router.put("/tasks/:id", verifyToken, async (req, res) => {
     try {
         const task = await Task.findByPk(req.params.id);
         if (!task) {
@@ -62,7 +64,7 @@ router.put("/tasks/:id", async (req, res) => {
     }
 });
 
-router.delete("/tasks/:id", async (req, res) => {
+router.delete("/tasks/:id", verifyToken, requireRole("admin"), async (req, res) => {
     try {
         const task = await Task.findByPk(req.params.id);
         if (!task) {
