@@ -14,10 +14,10 @@ module.exports = (sequelize, DataTypes) => {
         }
   }
   Task.init({
-    title: DataTypes.STRING,
-    dueDate: DataTypes.DATE,
-    completed: DataTypes.BOOLEAN,
-    userId: DataTypes.INTEGER
+    title: { type: DataTypes.STRING, allowNull: false },
+    dueDate: { type: DataTypes.DATE, allowNull: false },
+    completed: { type: DataTypes.BOOLEAN, defaultValue: false },
+    userId: { type: DataTypes.INTEGER, allowNull: false }
   }, {
     sequelize,
     modelName: 'Task',
