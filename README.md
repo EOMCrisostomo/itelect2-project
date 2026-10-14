@@ -1,5 +1,7 @@
 # itelect2-project
 My IT Elective 2 backend web development project.
+# [Live URL](https://itelect2-project-clcx.onrender.com/)
+https://itelect2-project-clcx.onrender.com/
 
 # **API Testing Results**
 
