@@ -4,9 +4,9 @@ import requireRole from "../middleware/requireRole.js";
 import * as taskController from '../controllers/taskController.js';
 const router = express.Router();
 
-router.get('/', taskController.getTasks);
+router.get('/', verifyToken, taskController.getTasks);
 router.post('/', verifyToken, taskController.createTask);
-router.get('/:id', taskController.getTaskById);
+router.get('/:id', verifyToken, taskController.getTaskById);
 router.put('/:id', verifyToken, taskController.updateTask);
 router.delete('/:id', verifyToken, requireRole(`admin`), taskController.deleteTask);
 
