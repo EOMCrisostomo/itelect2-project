@@ -4,6 +4,7 @@ import cors from 'cors';
 import authRoutes from './routes/auth.js';
 import taskRoutes from './routes/task.js';
 import userRoutes from './routes/user.js';
+import errorHandler from './middleware/errorHandler.js';
 
 const allowedOrigins = (process.env.CORS_ORIGIN || '')
 .split(',')
@@ -19,4 +20,6 @@ app.use('/api/tasks', taskRoutes);
 app.use('/api/users', userRoutes);
 
 const PORT = process.env.PORT || 3000;
+app.use(errorHandler);
+
 app.listen(PORT, () => console.log(`Server running on ${PORT}`));
